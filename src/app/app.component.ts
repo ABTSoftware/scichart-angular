@@ -15,6 +15,7 @@ import {
   ZoomPanModifier,
   ZoomExtentsModifier, EAxisType, ESeriesType, EChart2DModifierType
 } from "scichart";
+import {IInitResult} from "../../projects/scichart-angular/src/lib/types";
 
 @Component({
   selector: 'app-root',

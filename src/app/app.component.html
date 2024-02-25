@@ -1,7 +1,7 @@
 <h1>Hello, {{ title }}</h1>
 <p>Congratulations! Your app is running. 🎉</p>
 
-<lib-scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)">
+<lib-scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)" [innerContainerStyles]="{color: 'red'}">
   <button>Custom button</button>
 </lib-scichart-angular>
 

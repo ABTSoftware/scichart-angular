@@ -1,6 +1,7 @@
 import {Attribute, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  ISciChart2DDefinition,
   SciChartSurface, TSurfaceDefinition
 } from "scichart";
 import {IInitResult, TInitFunction} from "./types";
@@ -27,8 +28,8 @@ export class ScichartAngularComponent {
   @ViewChild('innerContainerRef') innerContainerRef!: ElementRef<HTMLDivElement>;
 
   @Input() initChart!: TInitFunction<SciChartSurface, IInitResult<SciChartSurface>>;
-  @Input() config: string | TSurfaceDefinition = '';
-  @Input() innerContainerStyles: Object = {};
+  @Input() config: any = ''; //TODO: type the config
+  @Input() innerContainerStyles: Object | null = null;
 
   // @Input() fallback: any = ScichartFallbackComponent; //TODO: pass custom component for fallback
 
@@ -38,7 +39,6 @@ export class ScichartAngularComponent {
   public innerContainerStylesMerged: Object = {
     height: '100%',
     width: '100%',
-    ...this.innerContainerStyles
   };
   public isInitialized: boolean = false;
   private isCancelled: boolean = false;
@@ -47,7 +47,14 @@ export class ScichartAngularComponent {
   private sciChartSurfaceRef: SciChartSurface | null = null;
   private initResultRef: IInitResult | null = null;
 
+  ngOnInit(): void {
+    if (this.innerContainerStyles) {
+      this.innerContainerStylesMerged = { ...this.innerContainerStylesMerged, ...this.innerContainerStyles };
+    }
+  }
+
   ngAfterViewInit(): void {
+    console.log('this.innerContainerStyles', this.innerContainerStyles);
     const rootElement = this.innerContainerRef.nativeElement;
     rootElement!.appendChild(this.chartRoot as Node);
 
@@ -75,6 +82,7 @@ export class ScichartAngularComponent {
       ) as Promise<IInitResult<SciChartSurface>>;
 
     runInit().then(initResult => {
+      console.log('initResult!!!', initResult);
       if (this.onInit && this.isInitialized) {
         this.onInit.emit(initResult.sciChartSurface);
       }
