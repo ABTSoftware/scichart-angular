@@ -13,7 +13,7 @@ import {
   NumberRange,
   MouseWheelZoomModifier,
   ZoomPanModifier,
-  ZoomExtentsModifier
+  ZoomExtentsModifier, EAxisType, ESeriesType, EChart2DModifierType
 } from "scichart";
 
 @Component({
@@ -26,7 +26,7 @@ import {
 export class AppComponent {
   title = 'scichart-angular-app';
 
-  initSciChart = async () => {
+  drawExample = async (rootElement: string | HTMLDivElement) => {
     // LICENSING
     // Commercial licenses set your license code here
     // Purchased license keys can be viewed at https://www.scichart.com/profile
@@ -34,9 +34,9 @@ export class AppComponent {
     // SciChartSurface.setRuntimeLicenseKey("YOUR_RUNTIME_KEY");
 
     // Initialize SciChartSurface. Don't forget to await!
-    const { sciChartSurface, wasmContext } = await SciChartSurface.create("scichart-root", {
+    const { sciChartSurface, wasmContext } = await SciChartSurface.create(rootElement, {
       theme: new SciChartJsNavyTheme(),
-      title: "SciChart.js First Chart",
+      title: 'SciChart.js First Chart',
       titleStyle: { fontSize: 22 }
     });
 
@@ -60,6 +60,32 @@ export class AppComponent {
     // Add some interaction modifiers to show zooming and panning
     sciChartSurface.chartModifiers.add(new MouseWheelZoomModifier(), new ZoomPanModifier(), new ZoomExtentsModifier());
 
-    return sciChartSurface;
+    return {sciChartSurface, wasmContext };
+  }
+
+  config = {
+    xAxes: [{ type: EAxisType.NumericAxis }],
+    yAxes: [{ type: EAxisType.NumericAxis }],
+    series: [
+      {
+        type: ESeriesType.SplineMountainSeries,
+        options: {
+          fill: "#3ca832",
+          stroke: "#eb911c",
+          strokeThickness: 4,
+          opacity: 0.4
+        },
+        xyData: { xValues: [1, 2, 3, 4], yValues: [1, 4, 7, 3] }
+      }
+    ],
+    modifiers: [
+      { type: EChart2DModifierType.ZoomPan, options: { enableZoom: true } },
+      { type: EChart2DModifierType.MouseWheelZoom },
+      { type: EChart2DModifierType.ZoomExtents }
+    ]
+  };
+
+  onInitHandler = (sciChartSurface: SciChartSurface) => {
+    console.log("onInitHandler", sciChartSurface);
   }
 }
