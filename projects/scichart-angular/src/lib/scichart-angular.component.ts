@@ -2,6 +2,7 @@ import {Attribute, Component, ElementRef, EventEmitter, Input, Output, ViewChild
 import { CommonModule } from '@angular/common';
 import {
   ISciChart2DDefinition,
+  ISciChartSurfaceBase,
   SciChartSurface, TSurfaceDefinition
 } from "scichart";
 import {IInitResult, TInitFunction} from "./types";
@@ -22,19 +23,22 @@ import { wrongInitResultMessage } from './constants';
   `,
   styles: ``
 })
-export class ScichartAngularComponent {
+export class ScichartAngularComponent<
+    TSurface extends ISciChartSurfaceBase = ISciChartSurfaceBase,
+    TInitResult extends IInitResult<TSurface> = IInitResult<TSurface>
+> {
   title = 'lib-scichart-angular';
 
   @ViewChild('innerContainerRef') innerContainerRef!: ElementRef<HTMLDivElement>;
 
-  @Input() initChart!: TInitFunction<SciChartSurface, IInitResult<SciChartSurface>>;
+  @Input() initChart!: TInitFunction<TSurface, TInitResult>;
   @Input() config: any = ''; //TODO: type the config
   @Input() innerContainerStyles: Object | null = null;
 
   // @Input() fallback: any = ScichartFallbackComponent; //TODO: pass custom component for fallback
 
-  @Output() onInit: EventEmitter<SciChartSurface> = new EventEmitter<SciChartSurface>();
-  @Output() onDelete: EventEmitter<SciChartSurface> = new EventEmitter<SciChartSurface>();
+  @Output() onInit: EventEmitter<TInitResult> = new EventEmitter<TInitResult>();
+  @Output() onDelete: EventEmitter<TInitResult> = new EventEmitter<TInitResult>();
 
   public innerContainerStylesMerged: Object = {
     height: '100%',
@@ -44,8 +48,8 @@ export class ScichartAngularComponent {
   private isCancelled: boolean = false;
   private chartRoot = createChartRoot();
 
-  private sciChartSurfaceRef: SciChartSurface | null = null;
-  private initResultRef: IInitResult | null = null;
+  private sciChartSurfaceRef: TSurface | null = null;
+  private initResultRef: TInitResult | null = null;
 
   ngOnInit(): void {
     if (this.innerContainerStyles) {
@@ -59,18 +63,18 @@ export class ScichartAngularComponent {
     rootElement!.appendChild(this.chartRoot as Node);
 
     const initializationFunction = this.initChart
-      ? (this.initChart as TInitFunction<SciChartSurface, IInitResult<SciChartSurface>>)
-      : createChartFromConfig<SciChartSurface>(this.config);
+      ? (this.initChart)
+      : createChartFromConfig<TSurface>(this.config) as TInitFunction<TSurface, TInitResult>;
 
-    const runInit = async (): Promise<IInitResult<SciChartSurface>> =>
+    const runInit = async (): Promise<TInitResult> =>
       new Promise((resolve, reject) =>
         initializationFunction(this.chartRoot as HTMLDivElement)
-          .then(initResult => {
+          .then((initResult: TInitResult) => {
             if (!initResult.sciChartSurface) {
               throw new Error(wrongInitResultMessage);
             }
-            this.sciChartSurfaceRef = initResult.sciChartSurface as SciChartSurface;
-            this.initResultRef = initResult as IInitResult;
+            this.sciChartSurfaceRef = initResult.sciChartSurface as TSurface;
+            this.initResultRef = initResult as TInitResult;
 
             if (!this.isCancelled) {
               this.isInitialized = true;
@@ -79,12 +83,12 @@ export class ScichartAngularComponent {
             resolve(initResult);
           })
           .catch(reject)
-      ) as Promise<IInitResult<SciChartSurface>>;
+      );
 
     runInit().then(initResult => {
       console.log('initResult!!!', initResult);
       if (this.onInit && this.isInitialized) {
-        this.onInit.emit(initResult.sciChartSurface);
+        this.onInit.emit(initResult);
       }
     });
   }
@@ -93,7 +97,7 @@ export class ScichartAngularComponent {
     this.isCancelled = true;
 
     if (this.onDelete && this.isInitialized) {
-      this.onDelete.emit(this.sciChartSurfaceRef as SciChartSurface);
+      this.onDelete.emit(this.initResultRef as TInitResult);
     }
 
     this.sciChartSurfaceRef?.delete();
