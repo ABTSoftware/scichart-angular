@@ -1,10 +1,16 @@
 <h1>Hello, {{ title }}</h1>
 <p>Congratulations! Your app is running. 🎉</p>
 
-<lib-scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)" [innerContainerStyles]="{color: 'red'}">
-  <button>Custom button</button>
-</lib-scichart-angular>
+<div style="width: 50%;">
+  <lib-scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red'}">
+    <button>Custom button</button>
+    <div fallback style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; justify-content: center; align-items: center; color: white;">
+      Loading...
+    </div>
+  </lib-scichart-angular>
 
-<lib-scichart-angular [config]="config" (onInit)="onInitHandler($event)">
-  <button>Custom button</button>
-</lib-scichart-angular>
+  <lib-scichart-angular [config]="config" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid green'}">
+    <button>Custom button</button>
+  </lib-scichart-angular>
+</div>
+

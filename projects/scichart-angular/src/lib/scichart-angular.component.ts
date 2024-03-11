@@ -1,13 +1,11 @@
-import {Attribute, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ISciChart2DDefinition,
   ISciChartSurfaceBase,
-  SciChartSurface, TSurfaceDefinition
 } from "scichart";
-import {IInitResult, TInitFunction} from "./types";
+import { IInitResult, TInitFunction } from "./types";
 import { ScichartFallbackComponent } from './scichart-fallback.component';
-import {createChartFromConfig, createChartRoot} from "./utils";
+import { createChartFromConfig, createChartRoot } from "./utils";
 import { wrongInitResultMessage } from './constants';
 
 @Component({
@@ -18,7 +16,10 @@ import { wrongInitResultMessage } from './constants';
     <div style="position: relative; height: 100%; width: 100%;">
       <div #innerContainerRef [ngStyle]="innerContainerStylesMerged"></div>
       <ng-content *ngIf="isInitialized" />
-      <scichart-fallback *ngIf="!isInitialized" />
+      <div *ngIf="!isInitialized" #fallbackContainer>
+        <ng-content select="[fallback]"></ng-content>
+      </div>
+      <scichart-fallback *ngIf="!hasCustomFallback && !isInitialized" />
     </div>
   `,
   styles: ``
@@ -30,6 +31,7 @@ export class ScichartAngularComponent<
   title = 'lib-scichart-angular';
 
   @ViewChild('innerContainerRef') innerContainerRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('fallbackContainer') fallbackContainer!: ElementRef<HTMLDivElement>;
 
   @Input() initChart!: TInitFunction<TSurface, TInitResult>;
   @Input() config: any = ''; //TODO: type the config
@@ -45,6 +47,7 @@ export class ScichartAngularComponent<
     width: '100%',
   };
   public isInitialized: boolean = false;
+  public hasCustomFallback: boolean = false;
   private isCancelled: boolean = false;
   private chartRoot = createChartRoot();
 
@@ -58,9 +61,13 @@ export class ScichartAngularComponent<
   }
 
   ngAfterViewInit(): void {
-    console.log('this.innerContainerStyles', this.innerContainerStyles);
     const rootElement = this.innerContainerRef.nativeElement;
     rootElement!.appendChild(this.chartRoot as Node);
+
+    const fallbackElement = this.fallbackContainer.nativeElement;
+    if (fallbackElement.childNodes.length > 0) {
+      this.hasCustomFallback = true;
+    }
 
     const initializationFunction = this.initChart
       ? (this.initChart)

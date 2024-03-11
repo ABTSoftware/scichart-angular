@@ -13,9 +13,8 @@ import {
   NumberRange,
   MouseWheelZoomModifier,
   ZoomPanModifier,
-  ZoomExtentsModifier, EAxisType, ESeriesType, EChart2DModifierType
+  ZoomExtentsModifier, EAxisType, ESeriesType, EChart2DModifierType,
 } from "scichart";
-import {IInitResult} from "../../projects/scichart-angular/src/lib/types";
 
 @Component({
   selector: 'app-root',
@@ -86,7 +85,7 @@ export class AppComponent {
     ]
   };
 
-  onInitHandler = (sciChartSurface: SciChartSurface) => {
-    console.log("onInitHandler", sciChartSurface);
+  onInitHandler = (initResult: any) => {
+    console.log("onInitHandler", initResult);
   }
 }
