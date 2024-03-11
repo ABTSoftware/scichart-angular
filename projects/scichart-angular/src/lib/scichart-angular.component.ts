@@ -9,7 +9,7 @@ import { createChartFromConfig, createChartRoot } from "./utils";
 import { wrongInitResultMessage } from './constants';
 
 @Component({
-  selector: 'lib-scichart-angular',
+  selector: 'scichart-angular',
   standalone: true,
   imports: [ CommonModule, ScichartFallbackComponent ],
   template: `
