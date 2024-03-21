@@ -1,3 +1,9 @@
+This is the Angular wrapper for the SciChart.js library. 
+It is a simple example of how to use the SciChart.js library in an Angular application. 
+The example demonstrates how to create a simple line chart with a single line series.
+
+The Angular component code can be found in the `projects/scichart-angular` folder.
+
 # ScichartAngularApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.2.
