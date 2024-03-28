@@ -15,7 +15,7 @@ import { wrongInitResultMessage } from './constants';
   template: `
     <div style="position: relative; height: 100%; width: 100%;">
       <div #innerContainerRef [ngStyle]="innerContainerStylesMerged"></div>
-      <ng-content *ngIf="isInitialized" />
+      <ng-content *ngIf="isInitialized"></ng-content>
       <div *ngIf="!isInitialized" #fallbackContainer>
         <ng-content select="[fallback]"></ng-content>
       </div>
