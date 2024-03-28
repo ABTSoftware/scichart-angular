@@ -15,7 +15,7 @@ The SciChartangular itself is MIT licensed, find the core library licensing info
 ### Prerequisites
 
 -   `angular` 17.1+
--   `scichart` 3.2.516+
+-   `scichart` 3.3+
 
 ### Installing
 
