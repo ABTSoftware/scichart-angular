@@ -19,7 +19,7 @@ import { wrongInitResultMessage } from './constants';
       <div *ngIf="!isInitialized" #fallbackContainer>
         <ng-content select="[fallback]"></ng-content>
       </div>
-      <scichart-fallback *ngIf="!hasCustomFallback && !isInitialized" />
+      <scichart-fallback *ngIf="!hasCustomFallback && !isInitialized"></scichart-fallback>
     </div>
   `,
   styles: ``
