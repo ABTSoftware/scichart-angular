@@ -3,10 +3,9 @@
 
 <div style="width: 50%;">
   <scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red'}">
-    <button>Custom button</button>
-    <div fallback style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; justify-content: center; align-items: center; color: white;">
-      Loading...
-    </div>
+  </scichart-angular>
+
+  <scichart-angular [initChart]="drawExample3D" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red'}">
   </scichart-angular>
 
   <scichart-angular [config]="config" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid green'}">
