@@ -37,8 +37,6 @@ export class ScichartAngularComponent<
   @Input() config: any = ''; //TODO: type the config
   @Input() innerContainerStyles: Object | null = null;
 
-  // @Input() fallback: any = ScichartFallbackComponent; //TODO: pass custom component for fallback
-
   @Output() onInit: EventEmitter<TInitResult> = new EventEmitter<TInitResult>();
   @Output() onDelete: EventEmitter<TInitResult> = new EventEmitter<TInitResult>();
 
@@ -93,7 +91,6 @@ export class ScichartAngularComponent<
       );
 
     runInit().then(initResult => {
-      console.log('initResult!!!', initResult);
       if (this.onInit && this.isInitialized) {
         this.onInit.emit(initResult);
       }
