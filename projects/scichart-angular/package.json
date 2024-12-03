@@ -1,6 +1,6 @@
 {
   "name": "scichart-angular",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Angular wrapper for SciChart JS",
   "homepage": "https://www.scichart.com",
   "author": "SciChart Ltd",
@@ -35,9 +35,9 @@
   },
   "bugs": "https://github.com/ABTSoftware/scichart-angular/issues",
   "peerDependencies": {
-    "@angular/common": "^17.1.0",
-    "@angular/core": "^17.1.0",
-    "scichart": "^3.3.560"
+    "@angular/common": ">=17.1.0",
+    "@angular/core": ">=17.1.0",
+    "scichart": ">=3.3.560"
   },
   "sideEffects": false
 }
