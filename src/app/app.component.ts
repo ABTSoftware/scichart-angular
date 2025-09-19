@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { ScichartAngularComponent } from 'scichart-angular';
 
 import {
@@ -26,20 +28,40 @@ import {
   SurfaceMeshRenderableSeries3D,
   EDrawMeshAs,
   MouseWheelZoomModifier3D, OrbitModifier3D, ResetCamera3DModifier, SciChart3DSurface,
+  MemoryUsageHelper,
 } from "scichart";
 
 SciChartSurface.loadWasmFromCDN();
 SciChart3DSurface.loadWasmFromCDN();
 
+SciChartSurface.autoDisposeWasmContext = true;
+SciChart3DSurface.autoDisposeWasmContext = true;
+MemoryUsageHelper.isMemoryUsageDebugEnabled = true;
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ScichartAngularComponent],
+  imports: [RouterOutlet, FormsModule, CommonModule, ScichartAngularComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'scichart-angular-app';
+  showCharts = true;
+
+  toggleCharts() {
+    this.showCharts = !this.showCharts;
+  }
+
+  public logDebugInfo() {
+    // try forcing garbage collection (if it has been enabled in Chromium)
+    window.gc?.();
+
+    // some delay may be required here
+
+    // output info about SciChart-related deletable object to console
+    MemoryUsageHelper.objectRegistry.log();
+  }
 
   drawExample3D = async (rootElement: string | HTMLDivElement) => {
     const { sciChart3DSurface, wasmContext } = await SciChart3DSurface.create(rootElement);

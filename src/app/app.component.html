@@ -1,14 +1,20 @@
 <h1>Hello, {{ title }}</h1>
-<p>Congratulations! Your app is running. 🎉</p>
 
-<div style="width: 50%;">
-  <scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red'}">
+<div class="chart-controls">
+  <label>
+    <input type="checkbox" [(ngModel)]="showCharts"> Show Charts
+  </label>
+  <button class="control-button" (click)="logDebugInfo()">Log Memory Debug Info to Console</button>
+</div>
+
+<div *ngIf="showCharts" style="width: 50%;">
+  <scichart-angular [initChart]="drawExample" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red', height: '300px'}">
   </scichart-angular>
 
-  <scichart-angular [initChart]="drawExample3D" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red'}">
+  <scichart-angular [initChart]="drawExample3D" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid red', height: '300px'}">
   </scichart-angular>
 
-  <scichart-angular [config]="config" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid green'}">
+  <scichart-angular [config]="config" (onInit)="onInitHandler($event)" [innerContainerStyles]="{border: '2px solid green', height: '300px'}">
     <button>Custom button</button>
   </scichart-angular>
 </div>
