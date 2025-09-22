@@ -37,7 +37,7 @@
   "peerDependencies": {
     "@angular/common": ">=17.1.0",
     "@angular/core": ">=17.1.0",
-    "scichart": ">=3.3.560"
+    "scichart": "^4.0.868"
   },
   "sideEffects": false
 }
