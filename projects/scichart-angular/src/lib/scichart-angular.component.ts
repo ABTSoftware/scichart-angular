@@ -1,5 +1,5 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Inject, Input, Output, PLATFORM_ID, ViewChild} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ISciChartSurfaceBase,
 } from "scichart";
@@ -33,6 +33,8 @@ export class ScichartAngularComponent<
   @ViewChild('innerContainerRef') innerContainerRef!: ElementRef<HTMLDivElement>;
   @ViewChild('fallbackContainer') fallbackContainer!: ElementRef<HTMLDivElement>;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   @Input() initChart!: TInitFunction<TSurface, TInitResult>;
   @Input() config: any = ''; //TODO: type the config
   @Input() innerContainerStyles: Object | null = null;
@@ -59,6 +61,11 @@ export class ScichartAngularComponent<
   }
 
   ngAfterViewInit(): void {
+    // SSR guard - only run in browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const rootElement = this.innerContainerRef.nativeElement;
     rootElement!.appendChild(this.chartRoot as Node);
 
@@ -91,7 +98,8 @@ export class ScichartAngularComponent<
       );
 
     runInit().then(initResult => {
-      if (this.onInit && this.isInitialized) {
+      // SSR guard in afterInit callback
+      if (isPlatformBrowser(this.platformId) && this.onInit && this.isInitialized) {
         this.onInit.emit(initResult);
       }
     });
@@ -99,6 +107,11 @@ export class ScichartAngularComponent<
 
   ngOnDestroy(): void {
     this.isCancelled = true;
+
+    // SSR guard - only run in browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
     if (this.onDelete && this.isInitialized) {
       this.onDelete.emit(this.initResultRef as TInitResult);

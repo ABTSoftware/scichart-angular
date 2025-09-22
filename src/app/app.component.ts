@@ -29,13 +29,14 @@ import {
   EDrawMeshAs,
   MouseWheelZoomModifier3D, OrbitModifier3D, ResetCamera3DModifier, SciChart3DSurface,
   MemoryUsageHelper,
+  SciChartSurfaceBase,
 } from "scichart";
 
 SciChartSurface.loadWasmFromCDN();
 SciChart3DSurface.loadWasmFromCDN();
 
-SciChartSurface.autoDisposeWasmContext = true;
-SciChart3DSurface.autoDisposeWasmContext = true;
+SciChartSurfaceBase.autoDisposeWasmContext = true;
+SciChartSurfaceBase.wasmContextDisposeTimeout = 0;
 MemoryUsageHelper.isMemoryUsageDebugEnabled = true;
 
 @Component({
@@ -165,9 +166,14 @@ export class AppComponent {
 
     // Create an XAxis and YAxis with growBy padding
     const growBy = new NumberRange(0.1, 0.1);
-    sciChartSurface.xAxes.add(new NumericAxis(wasmContext, { axisTitle: "X Axis", growBy }));
-    sciChartSurface.yAxes.add(new NumericAxis(wasmContext, { axisTitle: "Y Axis", growBy }));
-
+    const xAxis = new NumericAxis(wasmContext, { axisTitle: "X Axis", growBy })
+    const yAxis = new NumericAxis(wasmContext, { axisTitle: "Y Axis", growBy })
+    // xAxis.labelProvider.useCache = false;
+    // yAxis.labelProvider.useCache = false;
+    
+    sciChartSurface.xAxes.add(xAxis);
+    sciChartSurface.yAxes.add(yAxis);
+    
     // Create a line series with some initial data
     sciChartSurface.renderableSeries.add(new FastLineRenderableSeries(wasmContext, {
       stroke: "steelblue",
