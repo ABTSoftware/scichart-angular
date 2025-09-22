@@ -2,7 +2,7 @@
 
 SciChart.angular requires core [SciChart.js](https://www.npmjs.com/package/scichart) package to work and uses it as a peer dependency.
 
-The SciChartangular itself is MIT licensed, find the core library licensing info at [https://www.scichart.com/licensing-scichart-js/](https://www.scichart.com/licensing-scichart-js/).
+The SciChartAngular itself is MIT licensed, find the core library licensing info at [https://www.scichart.com/licensing-scichart-js/](https://www.scichart.com/licensing-scichart-js/).
 
 ## What does SciChart.Angular do?
 
@@ -15,7 +15,7 @@ The SciChartangular itself is MIT licensed, find the core library licensing info
 ### Prerequisites
 
 -   `angular` 17.1+
--   `scichart` 3.3+
+-   `scichart` 4.0.868+
 
 ### Installing
 
@@ -25,21 +25,23 @@ npm install scichart scichart-angular
 
 ### Loading required WASM dependencies
 
-SciChart.js requires additional WASM modules to work (`scichart2d.wasm` + `scichart2d.data` for instantiating `SciChartSurface` and `scichart3d.wasm` + `scichart3d.data` for `SciChart3DSurface`).  
+SciChart.js requires additional WASM modules to work (`scichart2d.wasm`  for instantiating `SciChartSurface` and `scichart3d.wasm` for `SciChart3DSurface`).  
 The library will try to fetch the appropriate files asynchronously during runtime.
-Find detailed info at [Deploying Wasm Docs](https://www.scichart.com/documentation/js/current/Deploying%20Wasm%20or%20WebAssembly%20and%20Data%20Files%20with%20your%20app.html)
+Find detailed info at:
+- our new Documentation website [Deploying WASM](https://www.scichart.com/documentation/js/v4/2d-charts/surface/deploying-wasm/)
+- legacy Docs (v3) [Deploying Wasm Docs](https://www.scichart.com/documentation/js/current/Deploying%20Wasm%20or%20WebAssembly%20and%20Data%20Files%20with%20your%20app.html)
+
+__NOTE__ ".data" files dependency was removed since v4.  
 
 By default SciChartAngular applies the following configuration:
 
 ```typescript
 SciChartSurface.configure({
     wasmUrl: "/scichart2d.wasm",
-    dataUrl: "/scichart2d.data"
 });
 
 SciChart3DSurface.configure({
     wasmUrl: "/scichart3d.wasm",
-    dataUrl: "/scichart3d.data"
 });
 ```
 
@@ -189,7 +191,8 @@ export class AppComponent {
 
 -   [Tutorials](https://www.scichart.com/documentation/js/current/webframe.html#Tutorial%2001%20-%20Setting%20up%20a%20Project%20with%20SciChart.js.html)
 -   [Getting Started Guide](https://scichart.com/getting-started/scichart-javascript/)
--   [Documentation](https://www.scichart.com/documentation/js/current/webframe.html)
+-   [Documentation](https://www.scichart.com/documentation/js/v4/intro)
+-   [Legacy Documentation](https://www.scichart.com/documentation/js/current/webframe.html)
 -   [CodePen, JSFiddle support](https://www.scichart.com/blog/codepen-codesandbox-and-jsfiddle-support-in-scichart-js/)
 
 ### Support
