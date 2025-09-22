@@ -2,11 +2,15 @@ import { Component, ElementRef, EventEmitter, Inject, Input, Output, PLATFORM_ID
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ISciChartSurfaceBase,
+  SciChartDefaults,
 } from "scichart";
 import { IInitResult, TInitFunction } from "./types";
 import { ScichartFallbackComponent } from './scichart-fallback.component';
 import { createChartFromConfig, createChartRoot } from "./utils";
 import { wrongInitResultMessage } from './constants';
+
+SciChartDefaults.defaultLoader = false;
+SciChartDefaults.disableAspect = true;
 
 @Component({
   selector: 'scichart-angular',
