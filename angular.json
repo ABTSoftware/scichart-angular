@@ -23,8 +23,16 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/scichart2d.data",
-              "src/scichart2d.wasm"
+              {
+                "glob": "**/*.wasm",
+                "input": "node_modules/scichart/_wasm",
+                "output": "/",
+                "ignore": [
+                  "SCRTTest*",
+                  "scichart2d*",
+                  "scichart3d*"
+                ]
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -83,7 +91,17 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.wasm",
+                "input": "node_modules/scichart/_wasm",
+                "output": "/",
+                "ignore": [
+                  "SCRTTest*",
+                  "scichart2d*",
+                  "scichart3d*"
+                ]
+              }
             ],
             "styles": [
               "src/styles.css"
