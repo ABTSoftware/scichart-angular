@@ -1,4 +1,4 @@
-import { ISciChartSurfaceBase, SciChartSurface, TSurfaceDefinition } from "scichart";
+import type { ISciChartSurfaceBase, SciChartSurface } from "scichart";
 
 /** Describes the core return type of a chart initialization function */
 export interface IInitResult<TSurface extends ISciChartSurfaceBase = ISciChartSurfaceBase> {
