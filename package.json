@@ -11,7 +11,7 @@
     "test:lib": "ng test scichart-angular --no-watch --browsers=ChromeHeadless",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "buildLib": "ng build scichart-angular",
-    "verifyPackage": "publint dist/scichart-angular && attw --pack dist/scichart-angular --ignore-rules unexpected-module-syntax",
+    "verifyPackage": "publint dist/scichart-angular && attw --pack dist/scichart-angular --ignore-rules unexpected-module-syntax cjs-resolves-to-esm false-cjs",
     "storybook": "ng run scichart-angular-app:storybook"
   },
   "private": true,

@@ -18,12 +18,32 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build
 
-Run `npm run ng build scichart-angular` from the root to build the scichart-angular library component. The build artifacts will be stored in the `dist` directory.
-Run `ng build` to build the project. 
+Run `npm run buildLib` from the root to build the scichart-angular library component. The build artifacts will be stored in the `dist` directory.
+Run `npm run build` to build the demo project.
+
+## Verify the package
+
+Run `npm run verifyPackage` after a library build to lint the publishable output with `publint` and
+`are-the-types-wrong`.
 
 ## Publish
-Run `npm publish` from `dist\scichart-angular`
+
+Run `npm run buildLib`, then publish from `dist/scichart-angular`:
+
+```
+cd dist/scichart-angular
+npm publish --tag alpha
+```
+
+The `--tag` matters. Publishing without it moves the `latest` tag onto the released version, so
+prerelease lines must always name their channel (`alpha` or `beta`). A stable release is published
+with no tag.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm run test:app` for the demo app specs and `npm run test:lib` for the library specs, both
+via [Karma](https://karma-runner.github.io).
+
+## Storybook
+
+Run `npm run storybook` to browse the component stories at `http://localhost:6006/`.
