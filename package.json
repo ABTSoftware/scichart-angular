@@ -7,6 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:app": "ng test scichart-angular-app --no-watch --browsers=ChromeHeadless",
+    "test:lib": "ng test scichart-angular --no-watch --browsers=ChromeHeadless",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "buildLib": "ng build scichart-angular",
     "verifyPackage": "publint dist/scichart-angular && attw --pack dist/scichart-angular --ignore-rules unexpected-module-syntax",
