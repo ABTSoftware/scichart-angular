@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/angular';
-import {argsToTemplate, componentWrapperDecorator} from '@storybook/angular';
+import {componentWrapperDecorator} from '@storybook/angular';
 
 import {ScichartAngularDeclarativeComponent} from 'scichart-angular';
 import {EAxisType, EChart2DModifierType, ESeriesType} from "scichart";
@@ -27,6 +27,8 @@ const defaultConfig: ISciChart2DDefinition = {
   ]
 };
 
+// Only the Builder-API path is covered here. The fallback slot and innerContainerStyles live on the
+// shared base component and are exercised by the ScichartAngular stories.
 const meta: Meta<ScichartAngularDeclarativeComponent> = {
   title: 'ScichartAngularDeclarative',
   component: ScichartAngularDeclarativeComponent,
@@ -60,32 +62,6 @@ type Story = StoryObj<ScichartAngularDeclarativeComponent>;
 
 export const ChartWithConfig: Story = {
   args: {
-    config: defaultConfig,
-  },
-};
-
-export const ChartWithFallback: Story = {
-  args: {
-    config: defaultConfig,
-  },
-  render: (args: ScichartAngularDeclarativeComponent) => ({
-    props: { ...args },
-    // config is bound explicitly: argsToTemplate does not reliably emit a binding for it, and the
-    // component throws without one.
-    template: `
-    <scichart-angular-declarative [config]="config" ${argsToTemplate(args)}>
-      <div fallback>Chart is loading...</div>
-    </scichart-angular-declarative>`,
-  }),
-};
-
-export const ChartWithCustomStyles: Story = {
-  args: {
-    innerContainerStyles: {
-      aspectRatio: 2,
-      width: "600px",
-      height: "300px",
-    },
     config: defaultConfig,
   },
 };
