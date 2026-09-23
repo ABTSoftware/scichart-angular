@@ -56,7 +56,8 @@ const meta: Meta<ScichartAngularComponent> = {
   // The story root has no height of its own, and the chart sizes itself to its parent.
   decorators: [componentWrapperDecorator((story) => `<div style="height: 400px;">${story}</div>`)],
   parameters: {
-    // onInit emits the surface itself; the actions addon cannot serialize an object that large.
+    // onInit emits the surface itself; the actions addon cannot serialize an object that large
+    // and throws "RangeError: Invalid string length".
     actions: { disable: true },
   },
   render: (args: ScichartAngularComponent) => ({
@@ -96,8 +97,10 @@ export const ChartWithFallback: Story = {
   },
   render: (args: ScichartAngularComponent) => ({
     props: { ...args },
+    // initChart is bound explicitly: argsToTemplate does not emit a binding for it, and the
+    // component throws without one.
     template: `
-    <scichart-angular ${argsToTemplate(args)}>
+    <scichart-angular [initChart]="initChart" ${argsToTemplate(args)}>
       <div fallback>Chart is loading...</div>
     </scichart-angular>`,
   }),
@@ -109,9 +112,11 @@ export const ChartWithNestedElements: Story = {
   },
   render: (args: ScichartAngularComponent) => ({
     props: { ...args },
+    // initChart is bound explicitly: argsToTemplate does not emit a binding for it, and the
+    // component throws without one.
     template: `
-    <scichart-angular ${argsToTemplate(args)}>
-      <button (click)="handleClick">Toggle Chart Theme</button>
+    <scichart-angular [initChart]="initChart" ${argsToTemplate(args)}>
+      <button>Toggle Chart Theme</button>
     </scichart-angular>`,
   }),
 };

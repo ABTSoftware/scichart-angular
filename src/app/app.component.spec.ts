@@ -22,6 +22,9 @@ describe('AppComponent', () => {
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
+    // Keep the charts unmounted: creating a surface needs WebGL, which headless Chrome has no
+    // GPU for. This test only asserts the heading.
+    fixture.componentInstance.showCharts = false;
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Hello, scichart-angular-app');

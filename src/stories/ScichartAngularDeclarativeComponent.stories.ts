@@ -34,7 +34,8 @@ const meta: Meta<ScichartAngularDeclarativeComponent> = {
   // The story root has no height of its own, and the chart sizes itself to its parent.
   decorators: [componentWrapperDecorator((story) => `<div style="height: 400px;">${story}</div>`)],
   parameters: {
-    // onInit emits the surface itself; the actions addon cannot serialize an object that large.
+    // onInit emits the surface itself; the actions addon cannot serialize an object that large
+    // and throws "RangeError: Invalid string length".
     actions: { disable: true },
   },
   render: (args: ScichartAngularDeclarativeComponent) => ({
@@ -69,8 +70,10 @@ export const ChartWithFallback: Story = {
   },
   render: (args: ScichartAngularDeclarativeComponent) => ({
     props: { ...args },
+    // config is bound explicitly: argsToTemplate does not reliably emit a binding for it, and the
+    // component throws without one.
     template: `
-    <scichart-angular-declarative ${argsToTemplate(args)}>
+    <scichart-angular-declarative [config]="config" ${argsToTemplate(args)}>
       <div fallback>Chart is loading...</div>
     </scichart-angular-declarative>`,
   }),
