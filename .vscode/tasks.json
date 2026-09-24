@@ -22,7 +22,7 @@
     },
     {
       "type": "npm",
-      "script": "test",
+      "script": "storybook",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
@@ -33,7 +33,7 @@
             "regexp": "(.*?)"
           },
           "endsPattern": {
-            "regexp": "bundle generation complete"
+            "regexp": "Storybook .* started"
           }
         }
       }

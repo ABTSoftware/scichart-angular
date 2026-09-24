@@ -1,5 +1,4 @@
-import { generateGuid, ISciChartSurfaceBase, TSurfaceDefinition, chartBuilder } from "scichart";
-import { IInitResult } from "./types";
+import { generateGuid } from "scichart";
 
 export const createChartRoot = () => {
     // check if SSR
@@ -14,23 +13,3 @@ export const createChartRoot = () => {
     internalRootElement.style.height = "100%";
     return internalRootElement;
 };
-
-export function createChartFromConfig<TSurface extends ISciChartSurfaceBase>(
-    config: string | TSurfaceDefinition
-) {
-    return async (chartRoot: string | HTMLDivElement) => {
-        // Potentially should return 2D, 3D, or Pie Chart
-        // TODO add better type handling
-        const chart = (await chartBuilder.buildChart(chartRoot, config as string)) as any;
-        if ("sciChartSurface" in chart) {
-            // 2D Chart
-            return { sciChartSurface: chart.sciChartSurface as TSurface };
-        } else if ("sciChart3DSurface" in chart) {
-            // 3D Chart
-            return { sciChartSurface: chart.sciChart3DSurface as TSurface };
-        } else {
-            // Pie Chart
-            return { sciChartSurface: chart as TSurface };
-        }
-    };
-}
