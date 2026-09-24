@@ -39,11 +39,24 @@ The `--tag` matters. Publishing without it moves the `latest` tag onto the relea
 prerelease lines must always name their channel (`alpha` or `beta`). A stable release is published
 with no tag.
 
-## Running unit tests
-
-Run `npm run test:app` for the demo app specs and `npm run test:lib` for the library specs, both
-via [Karma](https://karma-runner.github.io).
-
 ## Storybook
 
 Run `npm run storybook` to browse the component stories at `http://localhost:6006/`.
+
+## Running tests
+
+Tests run against the stories, in a real browser, via
+[@storybook/test-runner](https://github.com/storybookjs/test-runner). Start Storybook first, then:
+
+```
+npm run storybook     # in one terminal
+npm run test:stories  # in another
+```
+
+Every story is checked for three things: the chart finishes initialising (the wrapper's loading
+fallback disappears), it renders a canvas with a non-zero on-screen size, and nothing is logged to
+the console as an error.
+
+There are deliberately no pixel snapshots. Reading back from a WebGL canvas returns an empty buffer
+unless it was created with `preserveDrawingBuffer`, so comparing drawn content is timing-dependent,
+and GPU differences between machines would make baselines unreliable anyway.
