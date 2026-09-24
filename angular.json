@@ -26,12 +26,7 @@
               {
                 "glob": "**/*.wasm",
                 "input": "node_modules/scichart/_wasm",
-                "output": "/",
-                "ignore": [
-                  "SCRTTest*",
-                  "scichart2d*",
-                  "scichart3d*"
-                ]
+                "output": "/"
               }
             ],
             "styles": [

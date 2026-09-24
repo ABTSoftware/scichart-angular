@@ -32,12 +32,25 @@ Run `npm run buildLib`, then publish from `dist/scichart-angular`:
 
 ```
 cd dist/scichart-angular
+npm publish
+```
+
+A bare `npm publish` moves the `latest` tag onto the released version, which is what a stable
+release wants. A prerelease must always name its channel, or it would take `latest` from the
+current stable and break every existing install:
+
+```
 npm publish --tag alpha
 ```
 
-The `--tag` matters. Publishing without it moves the `latest` tag onto the released version, so
-prerelease lines must always name their channel (`alpha` or `beta`). A stable release is published
-with no tag.
+Publishing requires 2FA. To defer the prompt, stage the publish and approve it afterwards - staging
+needs npm 11.15+ and Node 22.14+:
+
+```
+npm stage publish . --tag alpha
+npm stage list scichart-angular
+npm stage approve <stage-id>
+```
 
 ## Storybook
 

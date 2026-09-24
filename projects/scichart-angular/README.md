@@ -6,7 +6,7 @@ The SciChartAngular itself is MIT licensed, find the core library licensing info
 
 ## What does SciChart.Angular do?
 
-- Neatly wraps up the lifecycle of  SciChart.js into a Angular component to ensure proper initialisation and memory cleanup.
+- Neatly wraps up the lifecycle of SciChart.js into an Angular component to ensure proper initialisation and memory cleanup.
 - Provides a number of ways to configure a chart (via JSON config or initialization function)
 - Can be used to create complex dashboards linking multiple charts (demos are coming soon!)
 
@@ -15,15 +15,12 @@ The SciChartAngular itself is MIT licensed, find the core library licensing info
 ### Prerequisites
 
 -   `angular` 17.1+
--   `scichart` 6.0.0+ (v6 prereleases are supported; for scichart 3.x-5.x use scichart-angular 1.x)
-
-scichart-angular 2.x is published as an alpha under the `alpha` npm tag while SciChart.js v6 is in
-prerelease.
+-   `scichart` 6.0.0+ (for scichart 3.x-5.x use scichart-angular 1.x)
 
 ### Installing
 
 ```
-npm install scichart@alpha scichart-angular@alpha
+npm install scichart scichart-angular
 ```
 
 ### Loading required WASM dependencies
@@ -51,7 +48,7 @@ your build. In `angular.json`:
 ]
 ```
 
-Find detailed info at [Deploying WASM](https://www.scichart.com/documentation/js/v4/2d-charts/surface/deploying-wasm/).
+Find detailed info at [Deploying WASM](https://www.scichart.com/documentation/js/v6/2d-charts/surface/deploying-wasm/).
 
 __NOTE__ `.data` files were removed in v4, and the separate `scichart2d.wasm` / `scichart3d.wasm`
 pair was replaced by the single union binary in v6.
@@ -80,7 +77,7 @@ There are two components, and each takes a different way of describing the chart
 
 #### With Config
 
-Pass a config object that will be used to generate a chart via the [Builder API](https://www.scichart.com/documentation/js/current/Intro%20to%20the%20Builder%20API.html).
+Pass a config object that will be used to generate a chart via the [Builder API](https://www.scichart.com/documentation/js/v6/2d-charts/builder-api/builder-api-overview/).
 
 app.component.html
 ```html
@@ -176,6 +173,7 @@ import { ScichartAngularComponent } from 'scichart-angular';
 import {
   SciChartSurface,
   NumericAxis,
+  SplineMountainRenderableSeries,
   XyDataSeries,
   MouseWheelZoomModifier,
   ZoomPanModifier,
@@ -249,9 +247,9 @@ export class AppComponent {
 
 ### Onboarding
 
--   [Tutorials](https://www.scichart.com/documentation/js/current/webframe.html#Tutorial%2001%20-%20Setting%20up%20a%20Project%20with%20SciChart.js.html)
+-   [Tutorials](https://www.scichart.com/documentation/js/v6/get-started/tutorials-js-npm-webpack/tutorial-01-setting-up-npm-project-with-scichart-js/)
 -   [Getting Started Guide](https://scichart.com/getting-started/scichart-javascript/)
--   [Documentation](https://www.scichart.com/documentation/js/v4/intro)
+-   [Documentation](https://www.scichart.com/documentation/js/v6/intro/)
 -   [Legacy Documentation](https://www.scichart.com/documentation/js/current/webframe.html)
 -   [CodePen, JSFiddle support](https://www.scichart.com/blog/codepen-codesandbox-and-jsfiddle-support-in-scichart-js/)
 
