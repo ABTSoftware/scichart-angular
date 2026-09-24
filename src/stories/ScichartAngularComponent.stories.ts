@@ -1,17 +1,17 @@
 import type {Meta, StoryObj} from '@storybook/angular';
-import {argsToTemplate} from '@storybook/angular';
+import {argsToTemplate, componentWrapperDecorator} from '@storybook/angular';
 
 import {ScichartAngularComponent} from 'scichart-angular';
 import {
   CameraController,
-  EAxisType,
-  EChart2DModifierType, EColor, EDrawMeshAs,
-  ESeriesType, GradientColorPalette, GradientParams,
+  EColor, EDrawMeshAs,
+  GradientColorPalette, GradientParams,
   MouseWheelZoomModifier, MouseWheelZoomModifier3D,
   NumberRange,
   NumericAxis,
-  NumericAxis3D, OrbitModifier3D, PieSegment, ResetCamera3DModifier,
+  NumericAxis3D, OrbitModifier3D, PieSegment, Point, ResetCamera3DModifier,
   SciChart3DSurface,
+  SciChartPieSurface,
   SciChartSurface,
   SplineMountainRenderableSeries, SurfaceMeshRenderableSeries3D, UniformGridDataSeries3D, Vector3,
   XyDataSeries,
@@ -20,26 +20,32 @@ import {
   ZoomPanModifier
 } from "scichart";
 
-const defaultConfig = {
-  xAxes: [{ type: EAxisType.NumericAxis }],
-  yAxes: [{ type: EAxisType.NumericAxis }],
-  series: [
-    {
-      type: ESeriesType.SplineMountainSeries,
-      options: {
-        fill: "#3ca832",
-        stroke: "#eb911c",
-        strokeThickness: 4,
-        opacity: 0.4
-      },
-      xyData: { xValues: [1, 2, 3, 4], yValues: [1, 4, 7, 3] }
-    }
-  ],
-  modifiers: [
-    { type: EChart2DModifierType.ZoomPan, options: { enableZoom: true } },
-    { type: EChart2DModifierType.MouseWheelZoom },
-    { type: EChart2DModifierType.ZoomExtents }
-  ]
+const defaultInitChart = async (rootElement: string | HTMLDivElement) => {
+  const { sciChartSurface, wasmContext } = await SciChartSurface.create(rootElement);
+
+  sciChartSurface.xAxes.add(new NumericAxis(wasmContext));
+  sciChartSurface.yAxes.add(new NumericAxis(wasmContext));
+
+  sciChartSurface.renderableSeries.add(
+    new SplineMountainRenderableSeries(wasmContext, {
+      dataSeries: new XyDataSeries(wasmContext, {
+        xValues: [1, 2, 3, 4],
+        yValues: [1, 4, 7, 3]
+      }),
+      fill: "#3ca832",
+      stroke: "#eb911c",
+      strokeThickness: 4,
+      opacity: 0.4
+    })
+  );
+
+  sciChartSurface.chartModifiers.add(
+    new ZoomPanModifier({ enableZoom: true }),
+    new MouseWheelZoomModifier(),
+    new ZoomExtentsModifier()
+  );
+
+  return {sciChartSurface, wasmContext };
 };
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
@@ -47,6 +53,13 @@ const meta: Meta<ScichartAngularComponent> = {
   title: 'ScichartAngular',
   component: ScichartAngularComponent,
   tags: ['autodocs'],
+  // The story root has no height of its own, and the chart sizes itself to its parent.
+  decorators: [componentWrapperDecorator((story) => `<div style="height: 400px;">${story}</div>`)],
+  parameters: {
+    // onInit emits the surface itself; the actions addon cannot serialize an object that large
+    // and throws "RangeError: Invalid string length".
+    actions: { disable: true },
+  },
   render: (args: ScichartAngularComponent) => ({
     props: {
       ...args,
@@ -72,19 +85,22 @@ export default meta;
 type Story = StoryObj<ScichartAngularComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const ChartWithConfig: Story = {
+export const ChartWithInitFunction: Story = {
   args: {
-    config: defaultConfig,
+    initChart: defaultInitChart,
   },
 };
 
 export const ChartWithFallback: Story = {
   args: {
-    config: defaultConfig,
+    initChart: defaultInitChart,
   },
   render: (args: ScichartAngularComponent) => ({
+    props: { ...args },
+    // initChart is bound explicitly: argsToTemplate does not emit a binding for it, and the
+    // component throws without one.
     template: `
-    <scichart-angular ${argsToTemplate(args)}>
+    <scichart-angular [initChart]="initChart" ${argsToTemplate(args)}>
       <div fallback>Chart is loading...</div>
     </scichart-angular>`,
   }),
@@ -92,12 +108,15 @@ export const ChartWithFallback: Story = {
 
 export const ChartWithNestedElements: Story = {
   args: {
-    config: defaultConfig,
+    initChart: defaultInitChart,
   },
   render: (args: ScichartAngularComponent) => ({
+    props: { ...args },
+    // initChart is bound explicitly: argsToTemplate does not emit a binding for it, and the
+    // component throws without one.
     template: `
-    <scichart-angular ${argsToTemplate(args)}>
-      <button (click)="handleClick">Toggle Chart Theme</button>
+    <scichart-angular [initChart]="initChart" ${argsToTemplate(args)}>
+      <button>Toggle Chart Theme</button>
     </scichart-angular>`,
   }),
 };
@@ -109,39 +128,7 @@ export const ChartWithCustomStyles: Story = {
       width: "600px",
       height: "300px",
     },
-    config: defaultConfig,
-  },
-};
-
-export const ChartWithInitFunction: Story = {
-  args: {
-    initChart: async (rootElement: string | HTMLDivElement) => {
-      const { sciChartSurface, wasmContext } = await SciChartSurface.create(rootElement);
-
-      sciChartSurface.xAxes.add(new NumericAxis(wasmContext));
-      sciChartSurface.yAxes.add(new NumericAxis(wasmContext));
-
-      sciChartSurface.renderableSeries.add(
-        new SplineMountainRenderableSeries(wasmContext, {
-          dataSeries: new XyDataSeries(wasmContext, {
-            xValues: [1, 2, 3, 4],
-            yValues: [1, 4, 7, 3]
-          }),
-          fill: "#3ca832",
-          stroke: "#eb911c",
-          strokeThickness: 4,
-          opacity: 0.4
-        })
-      );
-
-      sciChartSurface.chartModifiers.add(
-        new ZoomPanModifier({ enableZoom: true }),
-        new MouseWheelZoomModifier(),
-        new ZoomExtentsModifier()
-      );
-
-      return {sciChartSurface, wasmContext };
-    },
+    initChart: defaultInitChart,
   },
 };
 
@@ -237,7 +224,7 @@ export const ChartWith3dSurface: Story = {
 
 export const ChartWithPieSurface: Story = {
   args: {
-    initChart: async rootElement => {
+    initChart: async (rootElement: string | HTMLDivElement) => {
       const sciChartPieSurface = await SciChartPieSurface.create(rootElement);
 
       const pieSegment1 = new PieSegment({

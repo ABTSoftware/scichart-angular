@@ -15,40 +15,68 @@ The SciChartAngular itself is MIT licensed, find the core library licensing info
 ### Prerequisites
 
 -   `angular` 17.1+
--   `scichart` 4.0.868+
+-   `scichart` 6.0.0+ (v6 prereleases are supported; for scichart 3.x-5.x use scichart-angular 1.x)
+
+scichart-angular 2.x is published as an alpha under the `alpha` npm tag while SciChart.js v6 is in
+prerelease.
 
 ### Installing
 
 ```
-npm install scichart scichart-angular
+npm install scichart@alpha scichart-angular@alpha
 ```
 
 ### Loading required WASM dependencies
 
-SciChart.js requires additional WASM modules to work (`scichart2d.wasm`  for instantiating `SciChartSurface` and `scichart3d.wasm` for `SciChart3DSurface`).  
-The library will try to fetch the appropriate files asynchronously during runtime.
-Find detailed info at:
-- our new Documentation website [Deploying WASM](https://www.scichart.com/documentation/js/v4/2d-charts/surface/deploying-wasm/)
-- legacy Docs (v3) [Deploying Wasm Docs](https://www.scichart.com/documentation/js/current/Deploying%20Wasm%20or%20WebAssembly%20and%20Data%20Files%20with%20your%20app.html)
+SciChart.js requires WebAssembly binaries to work, and fetches them asynchronously at runtime.
 
-__NOTE__ ".data" files dependency was removed since v4.  
+Since v6 the engine is **modular** — a core plus side modules it loads on demand — so the payload
+you deploy is the whole `_wasm` **directory**, not a single file. One binary now carries both the
+2D and the 3D engine (`scichart.wasm`), and further modules are fetched as they are needed, such as
+`scichart-charting3d.wasm` for the first 3D chart. There are also `-nosimd` and `-64` variants,
+picked at runtime according to what the browser supports.
+
+Copy the directory rather than naming files individually, so a new variant or module never breaks
+your build. In `angular.json`:
+
+```json
+"assets": [
+  "src/favicon.ico",
+  "src/assets",
+  {
+    "glob": "**/*.wasm",
+    "input": "node_modules/scichart/_wasm",
+    "output": "/"
+  }
+]
+```
+
+Find detailed info at [Deploying WASM](https://www.scichart.com/documentation/js/v4/2d-charts/surface/deploying-wasm/).
+
+__NOTE__ `.data` files were removed in v4, and the separate `scichart2d.wasm` / `scichart3d.wasm`
+pair was replaced by the single union binary in v6.
 
 By default SciChartAngular applies the following configuration:
 
 ```typescript
 SciChartSurface.configure({
-    wasmUrl: "/scichart2d.wasm",
-});
-
-SciChart3DSurface.configure({
-    wasmUrl: "/scichart3d.wasm",
+    wasmUrl: "/scichart.wasm",
 });
 ```
 
+This is a single call: `SciChart3DSurface.configure()` writes the same setting, so calling both
+would overwrite the first and point the engine at a file the union build does not ship. Your own
+`SciChartSurface.configure(...)` or `loadWasmFromCDN()` call runs after this default and takes
+precedence.
+
 ### Using
 
-There are two ways to setup `SciChartAngular`.
-The component requires one of `[config]` or `[initChart]` properties to create a chart.
+There are two components, and each takes a different way of describing the chart.
+
+-   **`scichart-angular`** — takes an initialization function via `[initChart]`. This is the primary
+    component for code-first apps and produces the smallest bundles.
+-   **`scichart-angular-declarative`** — takes a chart definition via `[config]` and creates the
+    chart with the Builder API. The Builder is only bundled by apps that use this component.
 
 #### With Config
 
@@ -56,37 +84,33 @@ Pass a config object that will be used to generate a chart via the [Builder API]
 
 app.component.html
 ```html
-<scichart-angular [config]="config"></scichart-angular>
+<scichart-angular-declarative [config]="config"></scichart-angular-declarative>
 ```
 
 app.component.ts
 ```typescript
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ScichartAngularComponent } from 'scichart-angular';
+import { ScichartAngularDeclarativeComponent } from 'scichart-angular';
 
 import {
-  SciChartSurface,
-  NumericAxis,
-  XyDataSeries,
-  MouseWheelZoomModifier,
-  ZoomPanModifier,
-  ZoomExtentsModifier,
+  EAxisType,
   EChart2DModifierType,
   ESeriesType,
 } from "scichart";
+import type { ISciChart2DDefinition } from "scichart";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ScichartAngularComponent],
+  imports: [RouterOutlet, ScichartAngularDeclarativeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'scichart-angular-app';
-  
-  config = {
+
+  config: ISciChart2DDefinition = {
     xAxes: [{ type: EAxisType.NumericAxis }],
     yAxes: [{ type: EAxisType.NumericAxis }],
     series: [
@@ -107,7 +131,30 @@ export class AppComponent {
       { type: EChart2DModifierType.ZoomExtents }
     ]
   }
-  
+}
+```
+
+##### Type registration
+
+A chart definition names its parts as strings — `{ type: "LineSeries" }`. A string cannot pull code
+into a bundle, so since SciChart v6 the Builder API registers nothing on import: the types a
+definition names have to be registered, or building it fails with
+`Nothing registered for RenderableSeries:LineSeries`.
+
+`scichart-angular-declarative` handles this for you by calling `registerAllTypes()`, so any
+definition works with no setup. The trade-off is bundle size: the whole type universe is included.
+If that matters, use `[initChart]` instead, or build the chart yourself and register only the types
+you use:
+
+```typescript
+import { build2DChart } from "scichart";
+import { registerNumericAxis } from "scichart/Builder/register/axes";
+import { registerSplineMountainSeries } from "scichart/Builder/register/series";
+import { registerXyDataSeries } from "scichart/Builder/register/dataSeries";
+
+registerNumericAxis();
+registerSplineMountainSeries();
+registerXyDataSeries();
 ```
 
 
@@ -180,6 +227,19 @@ export class AppComponent {
 ```
 
 **NOTE** Make sure that in both cases `initChart` and `config` props do not change, as they should be only used for initial chart render.
+
+## Migrating from 1.x to 2.0
+
+-   **The `[config]` input moved to the new `scichart-angular-declarative` component.** Replace
+    `<scichart-angular [config]="...">` with `<scichart-angular-declarative [config]="...">`; all
+    other inputs and outputs are identical. `scichart-angular` now requires `[initChart]` and throws
+    a pointer error if it receives `[config]`.
+-   **The `scichart` peer dependency is now v6+.** One union `scichart.wasm` replaces the
+    `scichart2d.wasm` / `scichart3d.wasm` pair, and the deployed payload is the whole `_wasm`
+    directory. Apps staying on scichart 3.x-5.x should stay on scichart-angular 1.x.
+-   **`moduleResolution` must understand `exports` maps.** SciChart v6 ships an `exports` field;
+    set `"moduleResolution": "bundler"` (or `node16`) in `tsconfig.json` if you are still on the
+    classic `"node"` setting.
 
 ## Useful Links
 

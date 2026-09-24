@@ -1,6 +1,6 @@
 {
   "name": "scichart-angular",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.0",
   "description": "Angular wrapper for SciChart JS",
   "homepage": "https://www.scichart.com",
   "author": "SciChart Ltd",
@@ -37,7 +37,7 @@
   "peerDependencies": {
     "@angular/common": ">=17.1.0",
     "@angular/core": ">=17.1.0",
-    "scichart": "^4.0.868"
+    "scichart": ">=6.0.0-0"
   },
-  "sideEffects": false
+  "sideEffects": true
 }

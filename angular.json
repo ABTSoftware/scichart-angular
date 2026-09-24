@@ -23,8 +23,16 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/scichart2d.data",
-              "src/scichart2d.wasm"
+              {
+                "glob": "**/*.wasm",
+                "input": "node_modules/scichart/_wasm",
+                "output": "/",
+                "ignore": [
+                  "SCRTTest*",
+                  "scichart2d*",
+                  "scichart3d*"
+                ]
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -36,8 +44,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -71,24 +79,6 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "scichart-angular-app:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
-            "scripts": []
           }
         },
         "storybook": {
@@ -131,16 +121,6 @@
             }
           },
           "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "tsConfig": "projects/scichart-angular/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
-          }
         }
       }
     }

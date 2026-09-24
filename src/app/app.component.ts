@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ScichartAngularComponent } from 'scichart-angular';
+import { ScichartAngularComponent, ScichartAngularDeclarativeComponent } from 'scichart-angular';
 
 import {
   SciChartSurface,
@@ -31,9 +31,10 @@ import {
   MemoryUsageHelper,
   SciChartSurfaceBase,
 } from "scichart";
+import type { ISciChart2DDefinition } from "scichart";
 
-SciChartSurface.loadWasmFromCDN();
-SciChart3DSurface.loadWasmFromCDN();
+// The wasm payload is served from the app root by the "assets" rule in angular.json, which is what
+// scichart-angular configures by default. No loadWasmFromCDN()/configure() call is needed here.
 
 SciChartSurfaceBase.autoDisposeWasmContext = true;
 SciChartSurfaceBase.wasmContextDisposeTimeout = 0;
@@ -42,7 +43,7 @@ MemoryUsageHelper.isMemoryUsageDebugEnabled = true;
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, CommonModule, ScichartAngularComponent],
+  imports: [RouterOutlet, FormsModule, CommonModule, ScichartAngularComponent, ScichartAngularDeclarativeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -192,7 +193,7 @@ export class AppComponent {
     return {sciChartSurface, wasmContext };
   }
 
-  config = {
+  config: ISciChart2DDefinition = {
     xAxes: [{ type: EAxisType.NumericAxis }],
     yAxes: [{ type: EAxisType.NumericAxis }],
     series: [

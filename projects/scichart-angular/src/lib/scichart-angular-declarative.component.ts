@@ -1,18 +1,21 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { ISciChartSurfaceBase } from "scichart";
+import type { ISciChartSurfaceBase, TSurfaceDefinition } from "scichart";
 import { IInitResult, TInitFunction } from "./types";
 import { ScichartFallbackComponent } from './scichart-fallback.component';
 import { ScichartAngularBaseComponent } from './chart-base.component';
-import { configMovedMessage, missingInitChartMessage } from './constants';
+import { createChartFromConfig } from './create-chart-from-config';
+import { initChartOnDeclarativeMessage, missingConfigMessage } from './constants';
 
 /**
- * Creates a chart from an initialization function passed to the `initChart` input.
+ * Creates a chart from a definition passed to the `config` input, using the Builder API.
  *
- * For chart definitions (the `config` input in 1.x) use `scichart-angular-declarative`.
+ * Every built-in type is registered for you, so any definition works with no setup. The trade-off
+ * is bundle size: using this component pulls the whole type universe into the application bundle.
+ * For code-first charts use `scichart-angular` instead.
  */
 @Component({
-  selector: 'scichart-angular',
+  selector: 'scichart-angular-declarative',
   standalone: true,
   imports: [ CommonModule, ScichartFallbackComponent ],
   template: `
@@ -27,27 +30,24 @@ import { configMovedMessage, missingInitChartMessage } from './constants';
   `,
   styles: ``
 })
-export class ScichartAngularComponent<
+export class ScichartAngularDeclarativeComponent<
     TSurface extends ISciChartSurfaceBase = ISciChartSurfaceBase,
     TInitResult extends IInitResult<TSurface> = IInitResult<TSurface>
 > extends ScichartAngularBaseComponent<TSurface, TInitResult> {
-  @Input() initChart!: TInitFunction<TSurface, TInitResult>;
+  @Input() config: string | TSurfaceDefinition = '';
 
-  /**
-   * @deprecated The `config` input moved to `scichart-angular-declarative` in 2.0. Setting it here
-   * throws, so the change is not silently ignored.
-   */
-  @Input() set config(value: unknown) {
-    if (value !== undefined && value !== null && value !== '') {
-      throw new Error(configMovedMessage);
+  /** This component builds charts from definitions. Use `scichart-angular` for init functions. */
+  @Input() set initChart(value: unknown) {
+    if (value) {
+      throw new Error(initChartOnDeclarativeMessage);
     }
   }
 
   protected override resolveInitFunction(): TInitFunction<TSurface, TInitResult> {
-    if (!this.initChart) {
-      throw new Error(missingInitChartMessage);
+    if (!this.config) {
+      throw new Error(missingConfigMessage);
     }
 
-    return this.initChart;
+    return createChartFromConfig<TSurface>(this.config) as TInitFunction<TSurface, TInitResult>;
   }
 }
